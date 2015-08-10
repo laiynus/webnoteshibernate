@@ -46,6 +46,9 @@ public class NotesServlet extends HttpServlet {
             if(flag.contains("alltable")){
                 allNotesRequest(request, response);
             }
+            if(flag.contains("registration")){
+                registrationRequest(request, response);
+            }
         }
         String tmp = request.getParameter("submit");
         if(tmp != null){
@@ -180,5 +183,34 @@ public class NotesServlet extends HttpServlet {
             request.setAttribute("listNote", listNote);
 
         }
+    }
+
+    protected void registrationRequest(
+            HttpServletRequest request, HttpServletResponse response
+    ) throws ServletException, IOException {
+
+        UsersDAO usersDAO = new UsersDAOImplement();
+        Boolean flag = false;
+        User tmpUser;
+        tmpUser = usersDAO.getUser(request.getParameter("login"));
+        if (tmpUser != null) {
+            flag = true;
+            response.sendRedirect("registration.jsp?message=" + URLEncoder.encode("This user is already exist", "UTF-8"));
+        } else {
+            if (request.getParameter("password").equals(request.getParameter("reenterpassword"))) {
+                String login = request.getParameter("login");
+                String password = request.getParameter("password");
+                tmpUser = new User(login,password);
+                usersDAO.insert(tmpUser);
+                request.getSession().setAttribute("acptLogin", tmpUser.getLogin());
+            } else {
+                flag = true;
+                response.sendRedirect("registration.jsp?message=" + URLEncoder.encode("Passwords mismatch!", "UTF-8"));
+            }
+        }
+        if (!flag) {
+            response.sendRedirect("index.jsp");
+        }
+
     }
 }

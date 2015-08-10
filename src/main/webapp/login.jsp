@@ -38,6 +38,9 @@
                 <td><input type="password" name="password" id="password"></td>
             </tr>
             <tr>
+                <td><a href="registration.jsp">Registration here!</a></td>
+            </tr>
+            <tr>
                 <td colspan='2'><input type="submit" value="Submit"></td>
             </tr>
         </table>
