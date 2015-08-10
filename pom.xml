@@ -14,7 +14,7 @@
 
   <developers>
     <developer>
-      <id>Roman Khrapovitksy</id>
+      <name>Roman Khrapovitksy</name>
       <email>laiynus@gmail.com</email>
       <roles>
         <role>Java Web Developer</role>
@@ -53,8 +53,11 @@
   </dependencies>
 
   <build>
+
     <finalName>webnotes</finalName>
+
       <plugins>
+
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
@@ -64,7 +67,9 @@
                   <target>1.8</target>
               </configuration>
           </plugin>
+
       </plugins>
+
   </build>
     
 </project>
