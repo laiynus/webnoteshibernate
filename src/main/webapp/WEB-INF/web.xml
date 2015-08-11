@@ -24,10 +24,22 @@
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
         <url-pattern>/index.jsp</url-pattern>
+        <url-pattern>/allnotes.jsp</url-pattern>
     </filter-mapping>
-    
+
+    <filter>
+        <filter-name>RegistrationFilter</filter-name>
+        <filter-class>by.khrapovitsky.filter.RegistrationFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>RegistrationFilter</filter-name>
+        <url-pattern>/registration.jsp</url-pattern>
+        <url-pattern>/login.jsp</url-pattern>
+    </filter-mapping>
+
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>/index.jsp</welcome-file>
     </welcome-file-list>
 
 </web-app>

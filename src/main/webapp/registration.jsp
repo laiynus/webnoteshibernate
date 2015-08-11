@@ -37,6 +37,9 @@
                 <td><input type="password" name="reenterpassword" id="reenterpassword" required="true"></td>
             </tr>
             <tr>
+                <td><a href="login.jsp">Already a member?</a></td>
+            </tr>
+            <tr>
                 <td colspan='2'><input type="submit" value="Submit"></td>
             </tr>
         </table>

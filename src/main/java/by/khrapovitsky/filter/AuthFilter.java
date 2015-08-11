@@ -18,7 +18,7 @@ public class AuthFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
 
         if (req.getSession().getAttribute("acptLogin") == null) {
-            res.sendRedirect("login.jsp");
+            res.sendRedirect("notlogin.jsp");
         } else {
             chain.doFilter(request, response);
         }

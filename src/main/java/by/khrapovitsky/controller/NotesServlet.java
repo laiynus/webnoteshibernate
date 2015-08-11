@@ -43,20 +43,20 @@ public class NotesServlet extends HttpServlet {
             if (flag.contains("delete")) {
                 deleteRequest(request, response);
             }
-            if(flag.contains("alltable")){
+            if (flag.contains("alltable")) {
                 allNotesRequest(request, response);
             }
-            if(flag.contains("registration")){
+            if (flag.contains("registration")) {
                 registrationRequest(request, response);
             }
         }
         String tmp = request.getParameter("submit");
-        if(tmp != null){
-            if(tmp.contains("Add")){
-                addRequest(request,response);
+        if (tmp != null) {
+            if (tmp.contains("Add")) {
+                addRequest(request, response);
             }
-            if(tmp.contains("Edit")){
-                editRequest(request,response);
+            if (tmp.contains("Edit")) {
+                editRequest(request, response);
             }
         }
     }
@@ -117,10 +117,10 @@ public class NotesServlet extends HttpServlet {
             String login = (String) request.getSession().getAttribute("acptLogin");
             NotesDAO notesDAO = new NotesDAOImplement();
             Note note = notesDAO.getNote(id);
-            if(note!=null && note.getLogin().equals(login)){
+            if (note != null && note.getLogin().equals(login)) {
                 notesDAO.delete(note);
                 response.sendRedirect("index.jsp");
-            }else{
+            } else {
                 response.sendRedirect("403.jsp");
             }
         }
@@ -137,7 +137,7 @@ public class NotesServlet extends HttpServlet {
             java.util.Date utilDate = new java.util.Date();
             java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
-            Note note = new Note((String)request.getSession().getAttribute("acptLogin"),noteText, sqlDate);
+            Note note = new Note((String) request.getSession().getAttribute("acptLogin"), noteText, sqlDate);
             notesDAO.insert(note);
             response.sendRedirect("index.jsp");
         }
@@ -155,17 +155,16 @@ public class NotesServlet extends HttpServlet {
             String login = (String) request.getSession().getAttribute("acptLogin");
             NotesDAO notesDAO = new NotesDAOImplement();
             Note note = notesDAO.getNote(id);
-            if(note!=null && note.getLogin().equals(login)){
+            if (note != null && note.getLogin().equals(login)) {
                 note.setNote(noteText);
                 java.util.Date utilDate = new java.util.Date();
                 java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
                 note.setDateTimeCreate(sqlDate);
                 notesDAO.update(note);
                 response.sendRedirect("index.jsp");
-            }else{
+            } else {
                 response.sendRedirect("403.jsp");
             }
-
 
 
         }
@@ -198,9 +197,7 @@ public class NotesServlet extends HttpServlet {
             response.sendRedirect("registration.jsp?message=" + URLEncoder.encode("This user is already exist", "UTF-8"));
         } else {
             if (request.getParameter("password").equals(request.getParameter("reenterpassword"))) {
-                String login = request.getParameter("login");
-                String password = request.getParameter("password");
-                tmpUser = new User(login,password);
+                tmpUser = new User(request.getParameter("login"), request.getParameter("password"));
                 usersDAO.insert(tmpUser);
                 request.getSession().setAttribute("acptLogin", tmpUser.getLogin());
             } else {
