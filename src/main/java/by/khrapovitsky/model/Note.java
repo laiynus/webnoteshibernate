@@ -1,13 +1,22 @@
 package by.khrapovitsky.model;
 
-import java.sql.Date;
+import javax.persistence.*;
+import java.sql.Timestamp;
 
+@Entity
+@Table(name = "notes")
 public class Note {
-
-    int id;
-    String login;
-    String note;
-    Date dateTimeCreate;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private int id;
+    @Column(name = "note")
+    private String note;
+    @Column(name = "datetimecreate")
+    private Timestamp dateTimeCreate;
+    @ManyToOne
+    @JoinColumn(name = "login")
+    private User user;
 
     public int getId() {
         return id;
@@ -15,14 +24,6 @@ public class Note {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
     }
 
     public String getNote() {
@@ -33,25 +34,35 @@ public class Note {
         this.note = note;
     }
 
-    public Date getDateTimeCreate() {
+    public Timestamp getDateTimeCreate() {
         return dateTimeCreate;
     }
 
-    public void setDateTimeCreate(Date dateTimeCreate) {
+    public void setDateTimeCreate(Timestamp dateTimeCreate) {
         this.dateTimeCreate = dateTimeCreate;
     }
 
-    public Note(int id, String login, String note,Date dateTimeCreate) {
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Note(int id, User user, String note, Timestamp dateTimeCreate) {
         this.id = id;
-        this.login = login;
+        this.user = user;
         this.note = note;
         this.dateTimeCreate = dateTimeCreate;
     }
 
-    public Note(String login, String note,Date dateTimeCreate) {
-        this.id = id;
-        this.login = login;
+    public Note(User user, String note, Timestamp dateTimeCreate) {
+        this.user = user;
         this.note = note;
         this.dateTimeCreate = dateTimeCreate;
+    }
+
+    public Note() {
     }
 }
