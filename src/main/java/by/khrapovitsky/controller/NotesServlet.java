@@ -1,9 +1,6 @@
 package by.khrapovitsky.controller;
 
-import by.khrapovitsky.dao.NotesDAO;
-import by.khrapovitsky.dao.NotesDAOImplement;
-import by.khrapovitsky.dao.UsersDAO;
-import by.khrapovitsky.dao.UsersDAOImplement;
+import by.khrapovitsky.dao.*;
 import by.khrapovitsky.model.Note;
 import by.khrapovitsky.model.User;
 
@@ -20,10 +17,12 @@ import java.util.List;
 public class NotesServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         processRequest(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         processRequest(request, response);
     }
 
@@ -65,18 +64,14 @@ public class NotesServlet extends HttpServlet {
     protected void logInRequest(
             HttpServletRequest request, HttpServletResponse response
     ) throws ServletException, IOException {
-
-        UsersDAO usersDAO = new UsersDAOImplement();
         Boolean flag = false;
-        User tmpUser;
-        tmpUser = usersDAO.getUser(request.getParameter("login"));
+        User tmpUser = Factory.getInstance().getUsersDAO().getUser(request.getParameter("login"));
         if (tmpUser == null) {
             flag = true;
             response.sendRedirect("login.jsp?message=" + URLEncoder.encode("User not found!", "UTF-8"));
         } else {
             if (tmpUser.getLogin().equals(request.getParameter("login")) && (tmpUser.getPassword().equals(request.getParameter("password")))) {
                 request.getSession().setAttribute("acptLogin", tmpUser.getLogin());
-
             } else {
                 flag = true;
                 response.sendRedirect("login.jsp?message=" + URLEncoder.encode("Incorrect password!", "UTF-8"));
@@ -85,22 +80,8 @@ public class NotesServlet extends HttpServlet {
         if (!flag) {
             response.sendRedirect("index.jsp");
         }
-
     }
 
-    protected void lastNotesRequest(
-            HttpServletRequest request, HttpServletResponse response
-    ) throws ServletException, IOException {
-
-        if (request.getSession().getAttribute("acptLogin") == null) {
-            response.sendRedirect("notlogin.jsp");
-        } else {
-            NotesDAO notesDAO = new NotesDAOImplement();
-            List<Note> listNote = notesDAO.getLastUserNotes((String) request.getSession().getAttribute("acptLogin"));
-            request.setAttribute("listNote", listNote);
-
-        }
-    }
 
     protected void logOutRequest(
             HttpServletRequest request, HttpServletResponse response
@@ -115,12 +96,9 @@ public class NotesServlet extends HttpServlet {
         if (request.getSession().getAttribute("acptLogin") == null) {
             response.sendRedirect("notlogin.jsp");
         } else {
-            int id = Integer.parseInt(request.getParameter("id"));
-            String login = (String) request.getSession().getAttribute("acptLogin");
-            NotesDAO notesDAO = new NotesDAOImplement();
-            Note note = notesDAO.getNote(id);
-            if (note != null && note.getUser().getLogin().equals(login)) {
-                notesDAO.delete(note);
+            Note note = Factory.getInstance().getNotesDAO().getNoteWithUser(Integer.parseInt(request.getParameter("id")));
+            if (note != null && note.getUser().getLogin().equals(request.getSession().getAttribute("acptLogin"))) {
+                Factory.getInstance().getNotesDAO().delete(note);
                 response.sendRedirect("index.jsp");
             } else {
                 response.sendRedirect("403.jsp");
@@ -134,13 +112,9 @@ public class NotesServlet extends HttpServlet {
         if (request.getSession().getAttribute("acptLogin") == null) {
             response.sendRedirect("notlogin.jsp");
         } else {
-            String noteText = request.getParameter("note");
-            NotesDAO notesDAO = new NotesDAOImplement();
-            java.util.Date date= new java.util.Date();
-            User user = new User();
-            user.setLogin((String) request.getSession().getAttribute("acptLogin"));
-            Note note = new Note(user, noteText, new Timestamp(date.getTime()));
-            notesDAO.insert(note);
+            User user = new User((String) request.getSession().getAttribute("acptLogin"), null);
+            Note note = new Note(user, request.getParameter("note"), new Timestamp(new java.util.Date().getTime()));
+            Factory.getInstance().getNotesDAO().insert(note);
             response.sendRedirect("index.jsp");
         }
     }
@@ -151,55 +125,54 @@ public class NotesServlet extends HttpServlet {
         if (request.getSession().getAttribute("acptLogin") == null) {
             response.sendRedirect("notlogin.jsp");
         } else {
-            String noteText = request.getParameter("note");
-            String idtmp = request.getParameter("idEdit");
-            int id = Integer.parseInt(idtmp);
-            String login = (String) request.getSession().getAttribute("acptLogin");
-            NotesDAO notesDAO = new NotesDAOImplement();
-            Note note = notesDAO.getNote(id);
-            if (note != null && note.getUser().getLogin().equals(login)) {
-                note.setNote(noteText);
-                java.util.Date date= new java.util.Date();
-                note.setDateTimeCreate(new Timestamp(date.getTime()));
-                notesDAO.update(note);
+            Note note = Factory.getInstance().getNotesDAO().getNoteWithUser(Integer.parseInt(request.getParameter("idEdit")));
+            if (note != null && note.getUser().getLogin().equals(request.getSession().getAttribute("acptLogin"))) {
+                note.setNote(request.getParameter("note"));
+                note.setDateTimeCreate(new Timestamp(new java.util.Date().getTime()));
+                Factory.getInstance().getNotesDAO().update(note);
                 response.sendRedirect("index.jsp");
             } else {
                 response.sendRedirect("403.jsp");
             }
+        }
+    }
 
-
+    protected void lastNotesRequest(
+            HttpServletRequest request, HttpServletResponse response
+    ) throws ServletException, IOException {
+        if (request.getSession().getAttribute("acptLogin") == null) {
+            response.sendRedirect("notlogin.jsp");
+        } else {
+            User user = new User((String) request.getSession().getAttribute("acptLogin"), null);
+            List<Note> listNote = Factory.getInstance().getNotesDAO().getLastUserNotes(user);
+            request.setAttribute("listNote", listNote);
         }
     }
 
     protected void allNotesRequest(
             HttpServletRequest request, HttpServletResponse response
     ) throws ServletException, IOException {
-
         if (request.getSession().getAttribute("acptLogin") == null) {
             response.sendRedirect("notlogin.jsp");
         } else {
-            NotesDAO notesDAO = new NotesDAOImplement();
-            List<Note> listNote = notesDAO.getUserNotes((String) request.getSession().getAttribute("acptLogin"));
+            User user = new User((String) request.getSession().getAttribute("acptLogin"), null);
+            List<Note> listNote = Factory.getInstance().getNotesDAO().getUserNotes(user);
             request.setAttribute("listNote", listNote);
-
         }
     }
 
     protected void registrationRequest(
             HttpServletRequest request, HttpServletResponse response
     ) throws ServletException, IOException {
-
-        UsersDAO usersDAO = new UsersDAOImplement();
         Boolean flag = false;
-        User tmpUser;
-        tmpUser = usersDAO.getUser(request.getParameter("login"));
+        User tmpUser = Factory.getInstance().getUsersDAO().getUser(request.getParameter("login"));
         if (tmpUser != null) {
             flag = true;
             response.sendRedirect("registration.jsp?message=" + URLEncoder.encode("This user is already exist", "UTF-8"));
         } else {
             if (request.getParameter("password").equals(request.getParameter("reenterpassword"))) {
                 tmpUser = new User(request.getParameter("login"), request.getParameter("password"));
-                usersDAO.insert(tmpUser);
+                Factory.getInstance().getUsersDAO().insert(tmpUser);
                 request.getSession().setAttribute("acptLogin", tmpUser.getLogin());
             } else {
                 flag = true;
@@ -209,6 +182,5 @@ public class NotesServlet extends HttpServlet {
         if (!flag) {
             response.sendRedirect("index.jsp");
         }
-
     }
 }

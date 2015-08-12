@@ -1,6 +1,7 @@
 package by.khrapovitsky.dao;
 
 import by.khrapovitsky.model.Note;
+import by.khrapovitsky.model.User;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ public interface NotesDAO {
     void update(Note note);
     List<Note> getAllNotes();
     Note getNote(int id);
-    List<Note> getLastUserNotes(String login);
-    List<Note> getUserNotes(String login);
+    Note getNoteWithUser(int id);
+    List<Note> getLastUserNotes(User user);
+    List<Note> getUserNotes(User user);
 }

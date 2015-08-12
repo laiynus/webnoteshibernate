@@ -12,7 +12,7 @@ public class User {
     String login;
     @Column(name = "password")
     String password;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user",fetch=FetchType.LAZY)
     private List<Note> notes;
 
     public String getLogin() {
@@ -36,12 +36,6 @@ public class User {
     }
 
     public void setNotes(List<Note> notes) {
-        this.notes = notes;
-    }
-
-    public User(String login, String password, List<Note> notes) {
-        this.login = login;
-        this.password = password;
         this.notes = notes;
     }
 

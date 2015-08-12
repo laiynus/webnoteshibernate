@@ -14,7 +14,7 @@ public class Note {
     private String note;
     @Column(name = "datetimecreate")
     private Timestamp dateTimeCreate;
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "login")
     private User user;
 

@@ -5,7 +5,7 @@
     <title>Registration</title>
     <style type="text/css">
         #login-box {
-            width: 300px;
+            width: 400px;
             padding: 20px;
             margin: 100px auto;
             background: #fff;
