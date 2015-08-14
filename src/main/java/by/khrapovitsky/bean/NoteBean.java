@@ -1,6 +1,5 @@
 package by.khrapovitsky.bean;
 
-
 import by.khrapovitsky.dao.Factory;
 import by.khrapovitsky.model.Note;
 import by.khrapovitsky.model.User;
@@ -68,7 +67,9 @@ public class NoteBean {
     }
 
     public List<Note> getAllNotes() {
-        return allNotes;
+        User user = new User((String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin"), null);
+        List<Note> listNote = Factory.getInstance().getNotesDAO().getUserNotes(user);
+        return listNote;
     }
 
     public void setAllNotes(List<Note> allNotes) {
@@ -76,5 +77,11 @@ public class NoteBean {
     }
 
     public NoteBean() {
+    }
+
+    public void addNote(){
+        User user = new User((String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin"), null);
+        Note note = new Note(user, this.note, new Timestamp(new java.util.Date().getTime()));
+        Factory.getInstance().getNotesDAO().insert(note);
     }
 }

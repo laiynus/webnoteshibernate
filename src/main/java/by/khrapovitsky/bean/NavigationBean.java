@@ -21,4 +21,20 @@ public class NavigationBean  implements Serializable {
     public String toLastNotes() {
         return "/lastnotes.xhtml";
     }
+
+    public String redirectToRegistration(){
+        return  "/registration.xhtml?faces-redirect=true";
+    }
+
+    public String toRegistration(){
+        return "/registration.xhtml";
+    }
+
+    public String redirectToAllNotes(){
+        return "/allnotes.xhtml?faces-redirect=true";
+    }
+
+    public String toAllNotes(){
+        return  "/allnotes.xhtml";
+    }
 }

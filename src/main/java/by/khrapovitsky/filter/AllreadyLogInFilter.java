@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class RegistrationFilter implements Filter {
+public class AllreadyLogInFilter implements Filter {
 
     private FilterConfig filterConfig;
 
@@ -19,7 +19,7 @@ public class RegistrationFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
 
         if (req.getSession().getAttribute("acptLogin") != null) {
-            res.sendRedirect("alreadylogin.jsp");
+            res.sendRedirect("lastnotes.xhtml");
         } else {
             chain.doFilter(request, response);
         }

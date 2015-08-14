@@ -12,12 +12,12 @@ import java.io.IOException;
 import java.io.Serializable;
 
 @ManagedBean
-public class UserBean implements Serializable{
+public class UserBean implements Serializable {
 
     String login;
     String password;
 
-    @ManagedProperty(value="#{navigationBean}")
+    @ManagedProperty(value = "#{navigationBean}")
     private NavigationBean navigationBean;
 
     public String getLogin() {
@@ -64,6 +64,19 @@ public class UserBean implements Serializable{
                 FacesContext.getCurrentInstance().addMessage(null, msg);
 
             }
+        }
+    }
+
+    public void registration() throws IOException {
+        User tmpUser = Factory.getInstance().getUsersDAO().getUser(login);
+        if (tmpUser != null) {
+            FacesMessage msg = new FacesMessage("This user already exist!", "ERROR MSG");
+            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        } else {
+            Factory.getInstance().getUsersDAO().insert(new User(login, password));
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("acptLogin", login);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("lastnotes.xhtml");
         }
     }
 

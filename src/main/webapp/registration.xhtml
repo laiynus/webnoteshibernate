@@ -9,7 +9,7 @@
     <title>Web notes</title>
     <style type="text/css">
         #login-box {
-            width: 300px;
+            width: 400px;
             padding: 20px;
             margin: 100px auto;
             background: #fff;
@@ -20,29 +20,38 @@
     </style>
 </h:head>
 <h:body>
-    <h1 align="center">Login page of web notes</h1>
+    <h1 align="center">Registration of web notes</h1>
     <h:form id="login-box">
         <table>
             <tr>
-                <td><h:outputText value="Login:"/></td>
+                <td><h:outputLabel for="login" value="Login:"/></td>
                 <td><h:inputText value="#{userBean.login}" id="login" required="true"
-                                 requiredMessage="Please enter your login"/></td>
+                                 requiredMessage="Please enter login"/></td>
             </tr>
             <tr>
-                <td><h:outputText value="Password:"/></td>
+                <td><h:outputLabel for="password" value="Password:"/></td>
                 <td><h:inputSecret value="#{userBean.password}" id="password" required="true"
-                                   requiredMessage="Please enter your password"/></td>
+                                   requiredMessage="Please enter password">
+                    <f:validator validatorId="passwordValidator"/>
+                    <f:attribute name="confirmPassword" value="#{confirmPassword}"/>
+                </h:inputSecret></td>
+            </tr>
+            <tr>
+                <td><h:outputLabel for="confirmPassword" value="Confirm password:"/></td>
+                <td><h:inputSecret id="confirmPassword" required="true"
+                                   binding="#{confirmPassword}"
+                                   requiredMessage="Please enter confirm password"/></td>
             </tr>
             <tr>
                 <td>
-                    <h:commandButton id="button" value="Login" >
-                        <f:ajax  render="error" listener="#{userBean.logIn}" execute="@form"/>
+                    <h:commandButton id="button" value="Login">
+                        <f:ajax render="error" listener="#{userBean.registration}" execute="login password"/>
                     </h:commandButton>
                 </td>
             </tr>
             <h:messages id="error"/>
         </table>
-        <h:commandLink action="#{navigationBean.redirectToRegistration}" value="Registration here." immediate="true">
+        <h:commandLink immediate="true" action="#{navigationBean.redirectToLogin}" value="Already registered?">
         </h:commandLink>
     </h:form>
 </h:body>
