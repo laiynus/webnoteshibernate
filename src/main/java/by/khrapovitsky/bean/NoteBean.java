@@ -4,9 +4,11 @@ import by.khrapovitsky.dao.Factory;
 import by.khrapovitsky.model.Note;
 import by.khrapovitsky.model.User;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -17,11 +19,12 @@ public class NoteBean {
     String login;
     String note;
     Timestamp dateTimeCreate;
+    Boolean isEdit = false;
 
-    @ManagedProperty(value="#{notes.lastNote}")
+    @ManagedProperty(value = "#{notes.lastNote}")
     List<Note> listNotes;
 
-    @ManagedProperty(value="#{notes.allNote}")
+    @ManagedProperty(value = "#{notes.allNote}")
     List<Note> allNotes;
 
     public int getId() {
@@ -66,6 +69,14 @@ public class NoteBean {
         this.listNotes = listNotes;
     }
 
+    public Boolean getIsEdit() {
+        return isEdit;
+    }
+
+    public void setIsEdit(Boolean isEdit) {
+        this.isEdit = isEdit;
+    }
+
     public List<Note> getAllNotes() {
         User user = new User((String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin"), null);
         List<Note> listNote = Factory.getInstance().getNotesDAO().getUserNotes(user);
@@ -79,9 +90,71 @@ public class NoteBean {
     public NoteBean() {
     }
 
-    public void addNote(){
-        User user = new User((String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin"), null);
-        Note note = new Note(user, this.note, new Timestamp(new java.util.Date().getTime()));
-        Factory.getInstance().getNotesDAO().insert(note);
+    public void addNote() throws IOException {
+        if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin") == null) {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
+        } else {
+            User user = new User((String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin"), null);
+            Note note = new Note(user, this.note, new Timestamp(new java.util.Date().getTime()));
+            Factory.getInstance().getNotesDAO().insert(note);
+            this.isEdit = false;
+            this.note = null;
+            this.id = -1;
+        }
+    }
+
+    public void removeNote(Note note) throws IOException {
+        if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin") == null) {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
+        } else {
+            Note tmpNote = Factory.getInstance().getNotesDAO().getNoteWithUser(note.getId());
+            if (tmpNote != null) {
+                if (tmpNote.getUser().getLogin().equals(FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin"))) {
+                    Factory.getInstance().getNotesDAO().delete(tmpNote);
+                } else {
+                    FacesMessage msg = new FacesMessage("Access error", "ERROR MSG");
+                    msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                    FacesContext.getCurrentInstance().addMessage(null, msg);
+                }
+            } else {
+                FacesMessage msg = new FacesMessage("This note is not found!", "ERROR MSG");
+                msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                FacesContext.getCurrentInstance().addMessage(null, msg);
+            }
+        }
+    }
+
+    public void selectNote(Note tmp){
+        Note toEdit = Factory.getInstance().getNotesDAO().getNote(tmp.getId());
+        if(toEdit!=null){
+            isEdit = true;
+            id = toEdit.getId();
+            note = toEdit.getNote();
+        }
+    }
+
+    public void editNote() throws IOException {
+        if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin") == null) {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
+        } else {
+            Note tmpNote = Factory.getInstance().getNotesDAO().getNoteWithUser(this.id);
+            if (tmpNote != null) {
+                if (tmpNote.getUser().getLogin().equals(FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin"))) {
+                    User user = new User((String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin"), null);
+                    Factory.getInstance().getNotesDAO().update(new Note(this.id,user,this.note,new Timestamp(new java.util.Date().getTime())));
+                    this.isEdit = false;
+                    this.note = null;
+                    this.id = -1;
+                } else {
+                    FacesMessage msg = new FacesMessage("Access error", "ERROR MSG");
+                    msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                    FacesContext.getCurrentInstance().addMessage(null, msg);
+                }
+            } else {
+                FacesMessage msg = new FacesMessage("This note is not found!", "ERROR MSG");
+                msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                FacesContext.getCurrentInstance().addMessage(null, msg);
+            }
+        }
     }
 }

@@ -40,6 +40,17 @@
             <f:facet name="header">Last date modified</f:facet>
             <h:outputText value="#{notesTable.dateTimeCreate}"/>
         </h:column>
+        <h:column>
+            <f:facet name="header">Action</f:facet>
+            <h:form>
+                <h:commandButton value="Delete">
+                    <f:ajax render="tableNotes" listener="#{noteBean.removeNote(notesTable)}"/>
+                </h:commandButton>
+                <h:commandButton value="Edit">
+
+                </h:commandButton>
+            </h:form>
+        </h:column>
     </h:dataTable>
     <h:form>
         <h:commandLink action="#{navigationBean.redirectToLastNotes}" value="Last your notes" immediate="true">

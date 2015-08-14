@@ -48,35 +48,42 @@ public class UserBean implements Serializable {
     }
 
     public void logIn() throws IOException {
-        User tmpUser = Factory.getInstance().getUsersDAO().getUser(login);
-        if (tmpUser == null) {
-            FacesMessage msg = new FacesMessage("User not found!", "ERROR MSG");
-            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            FacesContext.getCurrentInstance().addMessage(null, msg);
-
-        } else {
-            if (tmpUser.getLogin().equals(login) && (tmpUser.getPassword().equals(password))) {
-                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("acptLogin", login);
-                FacesContext.getCurrentInstance().getExternalContext().redirect("lastnotes.xhtml");
-            } else {
-                FacesMessage msg = new FacesMessage("Incorrect password!", "ERROR MSG");
+        if(FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin")!=null){
+            FacesContext.getCurrentInstance().getExternalContext().redirect("lastnotes.xhtml");
+        }else{
+            User tmpUser = Factory.getInstance().getUsersDAO().getUser(login);
+            if (tmpUser == null) {
+                FacesMessage msg = new FacesMessage("User not found!", "ERROR MSG");
                 msg.setSeverity(FacesMessage.SEVERITY_ERROR);
                 FacesContext.getCurrentInstance().addMessage(null, msg);
 
+            } else {
+                if (tmpUser.getLogin().equals(login) && (tmpUser.getPassword().equals(password))) {
+                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("acptLogin", login);
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("lastnotes.xhtml");
+                } else {
+                    FacesMessage msg = new FacesMessage("Incorrect password!", "ERROR MSG");
+                    msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                    FacesContext.getCurrentInstance().addMessage(null, msg);
+                }
             }
         }
     }
 
     public void registration() throws IOException {
-        User tmpUser = Factory.getInstance().getUsersDAO().getUser(login);
-        if (tmpUser != null) {
-            FacesMessage msg = new FacesMessage("This user already exist!", "ERROR MSG");
-            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            FacesContext.getCurrentInstance().addMessage(null, msg);
-        } else {
-            Factory.getInstance().getUsersDAO().insert(new User(login, password));
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("acptLogin", login);
+        if(FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin")!=null){
             FacesContext.getCurrentInstance().getExternalContext().redirect("lastnotes.xhtml");
+        }else{
+            User tmpUser = Factory.getInstance().getUsersDAO().getUser(login);
+            if (tmpUser != null) {
+                FacesMessage msg = new FacesMessage("This user already exist!", "ERROR MSG");
+                msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                FacesContext.getCurrentInstance().addMessage(null, msg);
+            } else {
+                Factory.getInstance().getUsersDAO().insert(new User(login, password));
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("acptLogin", login);
+                FacesContext.getCurrentInstance().getExternalContext().redirect("lastnotes.xhtml");
+            }
         }
     }
 

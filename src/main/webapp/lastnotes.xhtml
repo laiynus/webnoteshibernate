@@ -25,7 +25,10 @@
                          requiredMessage="Please enter your note"/>
         <br></br>
         <h:commandButton value="Add note">
-            <f:ajax render="tableNotes" listener="#{noteBean.addNote}" execute="noteText"/>
+            <f:ajax render="tableNotes noteForm" listener="#{noteBean.addNote()}" execute="noteText"/>
+        </h:commandButton>
+        <h:commandButton value="Edit note" rendered="#{noteBean.isEdit}">
+            <f:ajax render="tableNotes noteForm" listener="#{noteBean.editNote()}" execute="noteText"/>
         </h:commandButton>
         <h:message for="noteText"/>
     </h:form>
@@ -39,6 +42,17 @@
         <h:column>
             <f:facet name="header">Last date modified</f:facet>
             <h:outputText value="#{notesTable.dateTimeCreate}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">Action</f:facet>
+            <h:form>
+                <h:commandButton value="Delete">
+                    <f:ajax render="tableNotes" listener="#{noteBean.removeNote(notesTable)}"/>
+                </h:commandButton>
+                <h:commandButton value="Select">
+                    <f:ajax render="noteForm" listener="#{noteBean.selectNote(notesTable)}"/>
+                </h:commandButton>
+            </h:form>
         </h:column>
     </h:dataTable>
     <h:form>
