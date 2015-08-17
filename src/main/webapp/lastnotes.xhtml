@@ -30,7 +30,7 @@
         <h:commandButton value="Edit note" action="#{noteBean.editNote}" rendered="#{noteBean.isEdit}">
             <f:ajax render="tableNotes noteForm" execute="noteText"/>
         </h:commandButton>
-        <h:message for="noteText"/>
+        <h:messages />
     </h:form>
 
     <h1 align="center">Your last notes</h1>
