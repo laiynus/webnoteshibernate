@@ -27,28 +27,27 @@
                 <td><h:outputLabel for="login" value="Login:"/></td>
                 <td><h:inputText value="#{userBean.login}" id="login" required="true"
                                  requiredMessage="Please enter login">
-                    <f:validator validatorId="loginValidator"/>
+                    <f:validator validatorId="registrationValidator"/>
+                    <f:attribute name="password" value="#{password}"/>
+                    <f:attribute name="confirmPassword" value="#{confirmPassword}"/>
                 </h:inputText>
                 </td>
             </tr>
             <tr>
                 <td><h:outputLabel for="password" value="Password:"/></td>
                 <td><h:inputSecret value="#{userBean.password}" id="password" required="true"
-                                   requiredMessage="Please enter password">
-                    <f:validator validatorId="passwordValidator"/>
-                    <f:attribute name="confirmPassword" value="#{confirmPassword}"/>
-                </h:inputSecret></td>
+                                   requiredMessage="Please enter password"  binding="#{password}"/>
+                </td>
             </tr>
             <tr>
                 <td><h:outputLabel for="confirmPassword" value="Confirm password:"/></td>
-                <td><h:inputSecret id="confirmPassword" required="true"
-                                   binding="#{confirmPassword}"
+                <td><h:inputSecret id="confirmPassword" required="true" binding="#{confirmPassword}"
                                    requiredMessage="Please enter confirm password"/></td>
             </tr>
             <tr>
                 <td>
-                    <h:commandButton id="button" value="Login">
-                        <f:ajax render="error" listener="#{userBean.registration}" execute="login password"/>
+                    <h:commandButton id="button" value="Registation">
+                        <f:ajax render="error" listener="#{userBean.registration}" execute="login password confirmPassword"/>
                     </h:commandButton>
                 </td>
             </tr>
