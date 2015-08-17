@@ -26,7 +26,10 @@
             <tr>
                 <td><h:outputLabel for="login" value="Login:"/></td>
                 <td><h:inputText value="#{userBean.login}" id="login" required="true"
-                                 requiredMessage="Please enter login"/></td>
+                                 requiredMessage="Please enter login">
+                    <f:validator validatorId="loginValidator"/>
+                </h:inputText>
+                </td>
             </tr>
             <tr>
                 <td><h:outputLabel for="password" value="Password:"/></td>

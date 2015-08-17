@@ -12,8 +12,7 @@ import javax.faces.validator.ValidatorException;
 public class PasswordValidator implements Validator {
 
     @Override
-    public void validate(FacesContext context, UIComponent component,
-                         Object value) throws ValidatorException {
+    public void validate(FacesContext context, UIComponent component,Object value) throws ValidatorException {
         String password = value.toString();
         UIInput uiInputConfirmPassword = (UIInput) component.getAttributes().get("confirmPassword");
         String confirmPassword = uiInputConfirmPassword.getSubmittedValue().toString();
@@ -22,8 +21,7 @@ public class PasswordValidator implements Validator {
         }
         if (!password.equals(confirmPassword)) {
             uiInputConfirmPassword.setValid(false);
-            throw new ValidatorException(new FacesMessage(
-                    "Password must match confirm password."));
+            throw new ValidatorException(new FacesMessage("Password must match confirm password."));
         }
     }
 }
