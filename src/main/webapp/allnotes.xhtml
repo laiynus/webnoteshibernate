@@ -24,8 +24,11 @@
         <h:inputTextarea value="#{noteBean.note}" cols="30" rows="10" id="noteText" style="width:400px" required="true"
                          requiredMessage="Please enter your note"/>
         <br></br>
-        <h:commandButton value="Add note">
-            <f:ajax render="tableNotes" listener="#{noteBean.addNote}" execute="noteText"/>
+        <h:commandButton value="Add note" action="#{noteBean.addNote}">
+            <f:ajax render="tableNotes noteForm" execute="noteText"/>
+        </h:commandButton>
+        <h:commandButton value="Edit note" action="#{noteBean.editNote}" rendered="#{noteBean.isEdit}">
+            <f:ajax render="tableNotes noteForm" execute="noteText"/>
         </h:commandButton>
         <h:message for="noteText"/>
     </h:form>
@@ -43,11 +46,11 @@
         <h:column>
             <f:facet name="header">Action</f:facet>
             <h:form>
-                <h:commandButton value="Delete">
-                    <f:ajax render="tableNotes" listener="#{noteBean.removeNote(notesTable)}"/>
+                <h:commandButton value="Delete" action="#{noteBean.removeNote(notesTable)}">
+                    <f:ajax render="tableNotes"/>
                 </h:commandButton>
-                <h:commandButton value="Edit">
-
+                <h:commandButton value="Select" action="#{noteBean.selectNote(notesTable)}">
+                    <f:ajax render="noteForm"/>
                 </h:commandButton>
             </h:form>
         </h:column>

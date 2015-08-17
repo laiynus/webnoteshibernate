@@ -7,19 +7,21 @@ import by.khrapovitsky.model.User;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 
 @ManagedBean
+@SessionScoped
 public class NoteBean {
 
-    int id;
-    String login;
-    String note;
-    Timestamp dateTimeCreate;
-    Boolean isEdit = false;
+    private int id;
+    private String login;
+    private String note;
+    private Timestamp dateTimeCreate;
+    private boolean isEdit = false;
 
     @ManagedProperty(value = "#{notes.lastNote}")
     List<Note> listNotes;
@@ -124,12 +126,12 @@ public class NoteBean {
         }
     }
 
-    public void selectNote(Note tmp){
+    public void selectNote(Note tmp) {
         Note toEdit = Factory.getInstance().getNotesDAO().getNote(tmp.getId());
-        if(toEdit!=null){
-            isEdit = true;
-            id = toEdit.getId();
-            note = toEdit.getNote();
+        if (toEdit != null) {
+            this.isEdit = true;
+            this.id = toEdit.getId();
+            this.note = toEdit.getNote();
         }
     }
 
@@ -137,14 +139,14 @@ public class NoteBean {
         if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin") == null) {
             FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
         } else {
-            Note tmpNote = Factory.getInstance().getNotesDAO().getNoteWithUser(this.id);
+            Note tmpNote = Factory.getInstance().getNotesDAO().getNoteWithUser(id);
             if (tmpNote != null) {
                 if (tmpNote.getUser().getLogin().equals(FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin"))) {
                     User user = new User((String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("acptLogin"), null);
-                    Factory.getInstance().getNotesDAO().update(new Note(this.id,user,this.note,new Timestamp(new java.util.Date().getTime())));
-                    this.isEdit = false;
-                    this.note = null;
-                    this.id = -1;
+                    Factory.getInstance().getNotesDAO().update(new Note(id, user, note, new Timestamp(new java.util.Date().getTime())));
+                    isEdit = false;
+                    note = null;
+                    id = -1;
                 } else {
                     FacesMessage msg = new FacesMessage("Access error", "ERROR MSG");
                     msg.setSeverity(FacesMessage.SEVERITY_ERROR);
