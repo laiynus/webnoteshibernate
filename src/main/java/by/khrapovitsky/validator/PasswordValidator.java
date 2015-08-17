@@ -9,7 +9,7 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 @FacesValidator("passwordValidator")
-public class RegistrationValidator implements Validator {
+public class PasswordValidator implements Validator {
 
     @Override
     public void validate(FacesContext context, UIComponent component,
