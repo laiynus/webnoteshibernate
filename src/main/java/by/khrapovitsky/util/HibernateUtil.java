@@ -2,26 +2,41 @@ package by.khrapovitsky.util;
 
 
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 
 public class HibernateUtil {
-    private static final SessionFactory sessionFactory;
+    private static SessionFactory sessionFactory = buildSessionFactory();
 
-    static {
-        try {
-            Configuration cfg = new Configuration().configure("hibernate.cfg.xml");
-            StandardServiceRegistryBuilder sb = new StandardServiceRegistryBuilder();
-            sb.applySettings(cfg.getProperties());
-            StandardServiceRegistry standardServiceRegistry = sb.build();
-            sessionFactory = cfg.buildSessionFactory(standardServiceRegistry);
-        } catch (Throwable th) {
-            System.err.println("Enitial SessionFactory creation failed" + th);
-            throw new ExceptionInInitializerError(th);
+    private static SessionFactory buildSessionFactory()
+    {
+        try
+        {
+            if (sessionFactory == null)
+            {
+                Configuration configuration = new Configuration().configure(HibernateUtil.class.getResource("/hibernate.cfg.xml"));
+                StandardServiceRegistryBuilder serviceRegistryBuilder = new StandardServiceRegistryBuilder();
+                serviceRegistryBuilder.applySettings(configuration.getProperties());
+                ServiceRegistry serviceRegistry = serviceRegistryBuilder.build();
+                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            }
+            return sessionFactory;
+        } catch (Throwable ex)
+        {
+            System.err.println("Initial SessionFactory creation failed." + ex);
+            throw new ExceptionInInitializerError(ex);
         }
     }
-    public static SessionFactory getSessionFactory() {
+
+    public static SessionFactory getSessionFactory()
+    {
         return sessionFactory;
     }
-}
+
+    public static void shutdown()
+    {
+        getSessionFactory().close();
+    }
+  }
+

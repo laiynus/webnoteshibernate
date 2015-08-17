@@ -8,9 +8,9 @@ import java.util.List;
 public class User {
 
     @Id
-    @Column(name = "login")
+    @Column(name = "login",unique = true,nullable = false)
     String login;
-    @Column(name = "password")
+    @Column(name = "password",nullable = false)
     String password;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user",fetch=FetchType.LAZY)
     private List<Note> notes;

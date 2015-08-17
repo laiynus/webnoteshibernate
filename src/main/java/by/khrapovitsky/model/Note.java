@@ -9,11 +9,11 @@ public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
+    @Column(name = "id",unique = true,nullable = false)
     private int id;
-    @Column(name = "note")
+    @Column(name = "note",nullable = false)
     private String note;
-    @Column(name = "datetimecreate")
+    @Column(name = "datetimecreate",nullable = false)
     private Timestamp dateTimeCreate;
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "login")
@@ -23,9 +23,7 @@ public class Note {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+
 
     public String getNote() {
         return note;
